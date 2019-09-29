@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import fetch from 'isomorphic-unfetch';
 import Draggable from 'react-draggable';
+import { Button, Image, Icon } from 'semantic-ui-react'
 
 
 function DraggablePlayer(props) {
@@ -26,28 +27,22 @@ function DraggablePlayer(props) {
     const dragHandlers = {onStart: onStart, onStop: onStop};
     return (
 
-        <div>
             <Draggable
                 onStart={() => onStart}
                 onStop={() => onStop}
+                bounds="parent"
+
             >
-                <div className="box">
-                    <img src={`https://premierleague-static-files.s3.amazonaws.com/premierleague/photos/players/40x40/p${props.player.code}.png`} alt={props.player.web_name} />
-                    <button onClick={() => props.deletePlayer(props.player.id)}>delete</button>
+                <div style={{width: 'fit-content', position: 'absolute'}}>
+                    <div>
+                        <Image circular size='tiny' draggable="false" src={`https://premierleague-static-files.s3.amazonaws.com/premierleague/photos/players/40x40/p${props.player.code}.png`} alt={props.player.web_name} />
+                    </div>
+                    <div style={{textAlign: 'center'}}>
+                        <Button circular icon onClick={() => props.deletePlayer(props.player.id)}><Icon name='delete' /></Button>
+                    </div>
+
                 </div>
             </Draggable>
-            <style jsx>{`
-                .box {
-                      background: #fff;
-                      border: 1px solid #999;
-                      border-radius: 3px;
-                      width: 180px;
-                      height: 180px;
-                      margin: 10px;
-                      padding: 10px;
-                      float: left;
-          `}</style>
-        </div>
     );
 }
 

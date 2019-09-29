@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Layout from '../components/Layout';
 import fetch from 'isomorphic-unfetch';
 import DraggablePlayer from '../components/DraggablePlayer'
+import { Button, Grid, Segment } from 'semantic-ui-react'
 
 
 function Index(props) {
@@ -30,131 +32,140 @@ function Index(props) {
     }
 
     return (
-        <div>
-            <div>
-                <select value={filterTeam} onChange={handleChange} name="teams">
-                    <option value="all">All</option>
-                    {props.data2.teams.map(team => (
-                        <option key={team.id} value={team.id}>{team.name}</option>
-                    ))}
-                </select>
-                <button onClick={() => setPlayerArray([])}>Reset</button>
-            </div>
-            <div style={{width: '400px', height: '400px', overflow: 'auto'}}>
-                <table>
-                    <tbody>
-                    <tr>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Team
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
+        <Layout>
+            <Grid stackable columns={2}>
+                <Grid.Column width={6}>
+                    <Segment>
+                        <div>
+                            <select value={filterTeam} onChange={handleChange} name="teams">
+                                <option value="all">All</option>
+                                {props.data2.teams.map(team => (
+                                    <option key={team.id} value={team.id}>{team.name}</option>
+                                ))}
+                            </select>
+                            <button onClick={() => setPlayerArray([])}>Reset</button>
+                        </div>
+                        <div style={{height: '400px', overflow: 'auto'}}>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Team
+                                    </th>
+                                    <th>
+                                    </th>
+                                </tr>
 
-                    { filterTeam === 'all' ?
-                        props.data2.elements.map(player => (
+                                { filterTeam === 'all' ?
+                                    props.data2.elements.map(player => (
 
-                        <tr key={player.id}>
-                            <td>
-                                {player.web_name}
-                            </td>
-                            <td>
-                                {props.data2.teams.filter(function(team) {
-                                    return team.id === player.team
-                                })[0].name}
-                            </td>
-                            <td>
-                                {playerArray.filter(e => e.id === player.id).length === 0 ?
+                                        <tr key={player.id}>
+                                            <td>
+                                                {player.web_name}
+                                            </td>
+                                            <td>
+                                                {props.data2.teams.filter(function(team) {
+                                                    return team.id === player.team
+                                                })[0].name}
+                                            </td>
+                                            <td>
+                                                {playerArray.filter(e => e.id === player.id).length === 0 ?
 
-                                    <button onClick={() => handleClick(player)}>
-                                    select
-                                    </button>
+                                                    <Button onClick={() => handleClick(player)}>
+                                                        select
+                                                    </Button>
+
+                                                    :
+
+                                                    ''
+                                                }
+
+                                            </td>
+                                        </tr>))
 
                                     :
 
+                                    props.data2.elements.filter(function(element) {
+                                        return element.team == filterTeam
+                                    }).map(player => (
+
+                                        <tr key={player.id}>
+                                            <td>
+                                                {player.web_name}
+                                            </td>
+                                            <td>
+                                                {props.data2.teams.filter(function(team) {
+                                                    return team.id === player.team
+                                                })[0].name}
+                                            </td>
+                                            <td>
+                                                {playerArray.filter(e => e.id === player.id).length === 0 ?
+
+                                                    <Button onClick={() => handleClick(player)}>
+                                                        select
+                                                    </Button>
+
+                                                    :
+
+                                                    ''
+                                                }
+                                            </td>
+                                        </tr>))
+
+                                }
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </Segment>
+                </Grid.Column>
+                <Grid.Column width={10}>
+                    <Segment style={{height: '600px', width: '100%', backgroundColor: '#18ba65'}}>
+                                {playerArray === [] ?
+
                                     ''
+
+                                    :
+                                    <div style={{width: '100%', height: '100%'}}>
+                                        {playerArray.map((player,i) => (
+
+                                        <DraggablePlayer key={player.id} key={player.id} player={player} deletePlayer={deletePlayer}/>
+
+
+                                        )) }
+                                    </div>
+
                                 }
 
-                            </td>
-                        </tr>))
-
-                        :
-
-                        props.data2.elements.filter(function(element) {
-                            return element.team == filterTeam
-                        }).map(player => (
-
-                            <tr key={player.id}>
-                                <td>
-                                    {player.web_name}
-                                </td>
-                                <td>
-                                    {props.data2.teams.filter(function(team) {
-                                        return team.id === player.team
-                                    })[0].name}
-                                </td>
-                                <td>
-                                    {playerArray.filter(e => e.id === player.id).length === 0 ?
-
-                                        <button onClick={() => handleClick(player)}>
-                                            select
-                                        </button>
-
-                                        :
-
-                                        ''
-                                    }
-                                </td>
-                            </tr>))
-
-                    }
-                    </tbody>
-
-                </table>
-
-            </div>
-            <div>
-                {playerArray === [] ?
-
-                    ''
-
-                    :
-
-                    playerArray.map((player,i) => (
-                        <div key={player.id}>
-                            <DraggablePlayer player={player} deletePlayer={deletePlayer}/>
-                            {/*<img src={`https://premierleague-static-files.s3.amazonaws.com/premierleague/photos/players/40x40/p${player.code}.png`} alt={player.web_name} />*/}
-                            {/*<button onClick={() => deletePlayer(player.id)}>delete</button>*/}
-                        </div>
-                    ))
-                }
+                    </Segment>
+                </Grid.Column>
+            </Grid>
 
 
-            </div>
 
+            {/*<style jsx>{`*/}
 
-            <style jsx>{`
+                {/*table {*/}
+                  {/*font-family: arial, sans-serif;*/}
+                  {/*border-collapse: collapse;*/}
+                  {/*width: 100%;*/}
+                {/*}*/}
 
-                table {
-                  font-family: arial, sans-serif;
-                  border-collapse: collapse;
-                  width: 100%;
-                }
+                {/*td, th {*/}
+                  {/*border: 1px solid #dddddd;*/}
+                  {/*text-align: left;*/}
+                  {/*padding: 8px;*/}
+                {/*}*/}
 
-                td, th {
-                  border: 1px solid #dddddd;
-                  text-align: left;
-                  padding: 8px;
-                }
-
-                tr:nth-child(even) {
-                  background-color: #dddddd;
-                }
-          `}</style>
-        </div>
+                {/*tr:nth-child(even) {*/}
+                  {/*background-color: #dddddd;*/}
+                {/*}*/}
+          {/*`}</style>*/}
+        </Layout>
     );
 }
 
